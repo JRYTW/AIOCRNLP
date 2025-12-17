@@ -1,6 +1,6 @@
 # 智能文件前置處理平台 (IDP) - Intelligent Document Processing
 
-這是一個使用 PHP 和 Google Gemini API 建構的智能文件前置處理平台的範例雛型，具備 AI-OCR 和 NLP 功能。
+這是一個使用 PHP 和 Google Gemini API 建構的智能文件前置處理平台雛型，具備 AI-OCR 和 NLP 功能。
 
 👉 [**智能文件前置處理平台 (IDP)**](https://ai.oo.gd) 👈
 
@@ -52,7 +52,7 @@
 
 **方法一：使用 PHP 內建伺服器（開發用）**
 ```bash
-cd c:\Users\Jerry\Desktop\AIOCR
+cd c:\Users\Jerry\Desktop\IDP
 php -S localhost:8080
 ```
 然後在瀏覽器開啟 http://localhost:8080
@@ -60,12 +60,12 @@ php -S localhost:8080
 **方法二：使用 XAMPP/WAMP**
 1. 將專案資料夾放入 htdocs
 2. 啟動 Apache
-3. 在瀏覽器開啟 http://localhost/AIOCR
+3. 在瀏覽器開啟 http://localhost/IDP
 
 ## 專案結構
 
 ```
-AIOCR/
+IDP/
 ├── index.html          # 前端介面
 ├── api.php             # API 處理端點
 ├── config.php          # 配置檔案
