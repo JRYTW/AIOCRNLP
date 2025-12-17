@@ -2,6 +2,8 @@
 
 這是一個使用 PHP 和 Google Gemini API 建構的智能文件前置處理平台的範例雛型，具備 AI-OCR 和 NLP 功能。
 
+👉 [**智能文件前置處理平台 (IDP)**](https://ai.oo.gd) 👈
+
 ## 功能特色
 
 ### 🔍 多格式攝取
