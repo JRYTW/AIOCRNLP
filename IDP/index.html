@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能文件前置處理平台 (IDP)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --success-color: #059669;
+            --warning-color: #d97706;
+            --danger-color: #dc2626;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        body {
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+        
+        .hero-section {
+            background: var(--bg-gradient);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+        
+        .hero-section h1 {
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .upload-zone {
+            border: 3px dashed #cbd5e1;
+            border-radius: 20px;
+            padding: 60px 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--primary-color);
+            background: #f0f7ff;
+            transform: scale(1.02);
+        }
+        
+        .upload-zone i {
+            font-size: 4rem;
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+        
+        .upload-zone.dragover i {
+            color: var(--primary-color);
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .result-section {
+            display: none;
+        }
+        
+        .result-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        .result-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .result-body {
+            padding: 25px;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .status-passed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-failed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .status-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .error-item {
+            background: #fef2f2;
+            border-left: 4px solid var(--danger-color);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .warning-item {
+            background: #fffbeb;
+            border-left: 4px solid var(--warning-color);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .data-table {
+            width: 100%;
+        }
+        
+        .data-table th {
+            background: #f8fafc;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #475569;
+        }
+        
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .ocr-text-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Consolas', monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+        
+        .spinner-border {
+            width: 4rem;
+            height: 4rem;
+        }
+        
+        .confidence-bar {
+            height: 10px;
+            border-radius: 5px;
+            background: #e2e8f0;
+            overflow: hidden;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+        
+        .key-finding-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background: #f0f9ff;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .key-finding-item i {
+            color: var(--primary-color);
+            margin-right: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 30px 0;
+            }
+            
+            .upload-zone {
+                padding: 40px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner-border text-light mb-4" role="status">
+                <span class="visually-hidden">處理中...</span>
+            </div>
+            <h4>智能分析進行中</h4>
+            <p id="loadingStatus">正在初始化...</p>
+            <div class="progress-container mt-3" style="width: 300px;">
+                <div class="progress" style="height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px;">
+                    <div class="progress-bar bg-light" id="progressBar" role="progressbar" style="width: 0%; transition: width 0.3s ease;"></div>
+                </div>
+                <small class="text-light mt-2 d-block" id="progressPercent">0%</small>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1><i class="bi bi-file-earmark-text me-3"></i>智能文件前置處理平台</h1>
+                    <p class="lead mb-0">Intelligent Document Processing (IDP)</p>
+                    <p class="mt-2 opacity-75">AI-OCR 光學字元辨識 + NLP 自然語言處理 = 智能財務文件分析</p>
+                </div>
+                <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                    <span class="badge bg-light text-dark px-3 py-2">
+                        <i class="bi bi-cpu me-1"></i> Powered by Gemini AI
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Main Content -->
+    <div class="container pb-5">
+        <!-- Features -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="feature-card">
+                    <div class="feature-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-file-earmark-image"></i>
+                    </div>
+                    <h5>多格式攝取</h5>
+                    <p class="text-muted mb-0">支援 PDF、JPG、PNG 等多種格式，處理歪斜、陰影文件</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="feature-card">
+                    <div class="feature-icon bg-success bg-opacity-10 text-success">
+                        <i class="bi bi-translate"></i>
+                    </div>
+                    <h5>語意理解</h5>
+                    <p class="text-muted mb-0">NLP 智能識別欄位意義，自動分辨營業收入、統一編號等</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="feature-card">
+                    <div class="feature-icon bg-warning bg-opacity-10 text-warning">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h5>自動糾錯</h5>
+                    <p class="text-muted mb-0">會計恆等式檢核，自動標示邏輯錯誤與可疑數據</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Upload Section -->
+        <div class="row mb-4" id="uploadSection">
+            <div class="col-12">
+                <div class="upload-zone" id="uploadZone">
+                    <i class="bi bi-cloud-arrow-up"></i>
+                    <h4>拖放文件至此處上傳</h4>
+                    <p class="text-muted">或點擊選擇文件</p>
+                    <p class="text-muted small">支援格式：PDF、JPG、JPEG、PNG、GIF、BMP、TIFF（最大 10MB）</p>
+                    <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.tiff" hidden>
+                    <button class="btn btn-primary btn-lg mt-3" onclick="document.getElementById('fileInput').click()">
+                        <i class="bi bi-upload me-2"></i>選擇文件
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Selected File Info -->
+        <div class="row mb-4" id="fileInfo" style="display: none;">
+            <div class="col-12">
+                <div class="alert alert-info d-flex align-items-center justify-content-between">
+                    <div>
+                        <i class="bi bi-file-earmark me-2"></i>
+                        <span id="fileName">filename.pdf</span>
+                        <span class="text-muted ms-2" id="fileSize">(1.2 MB)</span>
+                    </div>
+                    <div>
+                        <button class="btn btn-outline-danger btn-sm me-2" onclick="clearFile()">
+                            <i class="bi bi-x"></i> 取消
+                        </button>
+                        <button class="btn btn-success" onclick="processDocument()">
+                            <i class="bi bi-play-fill me-1"></i>開始分析
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Results Section -->
+        <div class="result-section" id="resultSection">
+            <!-- Summary Card -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="result-card">
+                        <div class="result-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="bi bi-clipboard-data me-2"></i>分析摘要</h5>
+                            <span class="status-badge" id="summaryStatus">
+                                <i class="bi bi-check-circle me-1"></i>完成
+                            </span>
+                        </div>
+                        <div class="result-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="text-muted small">文件類型</label>
+                                    <h5 id="documentType">-</h5>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="text-muted small">處理時間</label>
+                                    <h5 id="processingTime">-</h5>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted small">OCR 信心度</label>
+                                <div class="d-flex align-items-center">
+                                    <div class="confidence-bar flex-grow-1 me-3">
+                                        <div class="confidence-fill bg-success" id="confidenceBar" style="width: 0%"></div>
+                                    </div>
+                                    <span id="confidenceValue">0%</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-muted small mb-2 d-block">關鍵發現</label>
+                                <div id="keyFindings">
+                                    <!-- Key findings will be inserted here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tabs for detailed results -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="result-card">
+                        <div class="result-header">
+                            <ul class="nav nav-tabs card-header-tabs" id="resultTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="nlp-tab" data-bs-toggle="tab" data-bs-target="#nlp" type="button">
+                                        <i class="bi bi-diagram-3 me-1"></i>語意分析
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="ocr-tab" data-bs-toggle="tab" data-bs-target="#ocr" type="button">
+                                        <i class="bi bi-file-text me-1"></i>OCR 原文
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="validation-tab" data-bs-toggle="tab" data-bs-target="#validation" type="button">
+                                        <i class="bi bi-shield-check me-1"></i>驗證結果
+                                        <span class="badge bg-danger ms-1" id="errorBadge" style="display: none;">0</span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="result-body">
+                            <div class="tab-content" id="resultTabsContent">
+                                <!-- NLP Tab -->
+                                <div class="tab-pane fade show active" id="nlp" role="tabpanel">
+                                    <div id="nlpContent">
+                                        <!-- Company Info -->
+                                        <div class="mb-4">
+                                            <h6 class="text-muted mb-3"><i class="bi bi-building me-2"></i>公司資訊</h6>
+                                            <table class="data-table">
+                                                <tbody id="companyInfoTable">
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        
+                                        <!-- Financial Data -->
+                                        <div class="mb-4">
+                                            <h6 class="text-muted mb-3"><i class="bi bi-cash-stack me-2"></i>財務數據</h6>
+                                            <table class="data-table">
+                                                <tbody id="financialDataTable">
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        
+                                        <!-- Date Info -->
+                                        <div class="mb-4">
+                                            <h6 class="text-muted mb-3"><i class="bi bi-calendar me-2"></i>日期資訊</h6>
+                                            <table class="data-table">
+                                                <tbody id="dateInfoTable">
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        
+                                        <!-- Other Fields -->
+                                        <div id="otherFieldsSection" style="display: none;">
+                                            <h6 class="text-muted mb-3"><i class="bi bi-list-ul me-2"></i>其他欄位</h6>
+                                            <table class="data-table">
+                                                <tbody id="otherFieldsTable">
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- OCR Tab -->
+                                <div class="tab-pane fade" id="ocr" role="tabpanel">
+                                    <div class="ocr-text-box" id="ocrText">
+                                        <!-- OCR text will be inserted here -->
+                                    </div>
+                                </div>
+                                
+                                <!-- Validation Tab -->
+                                <div class="tab-pane fade" id="validation" role="tabpanel">
+                                    <div id="validationContent">
+                                        <!-- Validation Status -->
+                                        <div class="mb-4">
+                                            <h6 class="text-muted mb-3">驗證狀態</h6>
+                                            <div id="validationStatus"></div>
+                                        </div>
+                                        
+                                        <!-- Errors -->
+                                        <div id="errorsSection" style="display: none;">
+                                            <h6 class="text-muted mb-3">
+                                                <i class="bi bi-exclamation-triangle text-danger me-2"></i>錯誤
+                                            </h6>
+                                            <div id="errorsList"></div>
+                                        </div>
+                                        
+                                        <!-- Warnings -->
+                                        <div id="warningsSection" style="display: none;">
+                                            <h6 class="text-muted mb-3">
+                                                <i class="bi bi-exclamation-circle text-warning me-2"></i>警告
+                                            </h6>
+                                            <div id="warningsList"></div>
+                                        </div>
+                                        
+                                        <!-- Checks Performed -->
+                                        <div class="mt-4">
+                                            <h6 class="text-muted mb-3">已執行檢核</h6>
+                                            <div id="checksPerformed"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <button class="btn btn-outline-primary me-2" onclick="downloadResult()">
+                        <i class="bi bi-download me-1"></i>下載分析報告
+                    </button>
+                    <button class="btn btn-primary" onclick="resetUpload()">
+                        <i class="bi bi-arrow-repeat me-1"></i>分析新文件
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let selectedFile = null;
+        let analysisResult = null;
+        
+        // 拖放功能
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+        
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+        
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+        
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect(files[0]);
+            }
+        });
+        
+        uploadZone.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+        
+        function handleFileSelect(file) {
+            const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff'];
+            const allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff'];
+            
+            const extension = file.name.split('.').pop().toLowerCase();
+            
+            if (!allowedExtensions.includes(extension)) {
+                alert('不支援的文件格式！請上傳 PDF 或圖片文件。');
+                return;
+            }
+            
+            if (file.size > 10 * 1024 * 1024) {
+                alert('文件大小超過 10MB 限制！');
+                return;
+            }
+            
+            selectedFile = file;
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').textContent = `(${formatFileSize(file.size)})`;
+            document.getElementById('fileInfo').style.display = 'block';
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+        }
+        
+        function clearFile() {
+            selectedFile = null;
+            fileInput.value = '';
+            document.getElementById('fileInfo').style.display = 'none';
+        }
+        
+        function processDocument() {
+            if (!selectedFile) {
+                alert('請先選擇文件！');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('document', selectedFile);
+            
+            // 顯示載入畫面
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingStatus = document.getElementById('loadingStatus');
+            const progressBar = document.getElementById('progressBar');
+            const progressPercent = document.getElementById('progressPercent');
+            
+            loadingOverlay.style.display = 'flex';
+            loadingStatus.textContent = '正在初始化...';
+            if (progressBar) progressBar.style.width = '0%';
+            if (progressPercent) progressPercent.textContent = '0%';
+            
+            // 使用 fetch 上傳並獲取 SSE 串流
+            fetch('api_stream.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+                
+                function processStream() {
+                    return reader.read().then(({ done, value }) => {
+                        if (done) {
+                            return;
+                        }
+                        
+                        buffer += decoder.decode(value, { stream: true });
+                        const lines = buffer.split('\n');
+                        buffer = lines.pop(); // 保留不完整的行
+                        
+                        for (const line of lines) {
+                            if (line.startsWith('event: ')) {
+                                currentEvent = line.substring(7).trim();
+                            } else if (line.startsWith('data: ')) {
+                                const data = JSON.parse(line.substring(6));
+                                
+                                if (currentEvent === 'progress') {
+                                    loadingStatus.textContent = data.message;
+                                    if (progressBar) progressBar.style.width = data.percent + '%';
+                                    if (progressPercent) progressPercent.textContent = data.percent + '%';
+                                } else if (currentEvent === 'result') {
+                                    loadingOverlay.style.display = 'none';
+                                    if (data.success) {
+                                        analysisResult = data;
+                                        displayResults(data);
+                                    } else {
+                                        alert('處理失敗：' + data.error);
+                                    }
+                                } else if (currentEvent === 'error') {
+                                    loadingOverlay.style.display = 'none';
+                                    alert('處理失敗：' + data.error);
+                                }
+                            }
+                        }
+                        
+                        return processStream();
+                    });
+                }
+                
+                let currentEvent = '';
+                return processStream();
+            })
+            .catch(error => {
+                loadingOverlay.style.display = 'none';
+                alert('發生錯誤：' + error.message);
+            });
+        }
+        
+        function displayResults(data) {
+            const result = data.data;
+            const meta = data.meta;
+            
+            // 顯示結果區域
+            document.getElementById('uploadSection').style.display = 'none';
+            document.getElementById('fileInfo').style.display = 'none';
+            document.getElementById('resultSection').style.display = 'block';
+            
+            // 更新摘要
+            const summary = result.summary;
+            document.getElementById('documentType').textContent = summary.document_type || '未知';
+            document.getElementById('processingTime').textContent = meta.processing_time;
+            
+            // 更新信心度
+            const confidence = result.ocr.confidence || 0;
+            const confidenceBar = document.getElementById('confidenceBar');
+            const confidenceValue = document.getElementById('confidenceValue');
+            confidenceBar.style.width = confidence + '%';
+            confidenceValue.textContent = confidence + '%';
+            
+            if (confidence >= 80) {
+                confidenceBar.className = 'confidence-fill bg-success';
+            } else if (confidence >= 60) {
+                confidenceBar.className = 'confidence-fill bg-warning';
+            } else {
+                confidenceBar.className = 'confidence-fill bg-danger';
+            }
+            
+            // 更新狀態徽章
+            const summaryStatus = document.getElementById('summaryStatus');
+            if (summary.validation_status === 'passed') {
+                summaryStatus.className = 'status-badge status-passed';
+                summaryStatus.innerHTML = '<i class="bi bi-check-circle me-1"></i>驗證通過';
+            } else if (summary.error_count > 0) {
+                summaryStatus.className = 'status-badge status-failed';
+                summaryStatus.innerHTML = '<i class="bi bi-x-circle me-1"></i>發現錯誤';
+            } else if (summary.warning_count > 0) {
+                summaryStatus.className = 'status-badge status-warning';
+                summaryStatus.innerHTML = '<i class="bi bi-exclamation-triangle me-1"></i>有警告';
+            }
+            
+            // 顯示關鍵發現
+            const keyFindings = document.getElementById('keyFindings');
+            keyFindings.innerHTML = '';
+            if (summary.key_findings && summary.key_findings.length > 0) {
+                summary.key_findings.forEach(finding => {
+                    keyFindings.innerHTML += `
+                        <div class="key-finding-item">
+                            <i class="bi bi-check2"></i>
+                            <span>${finding}</span>
+                        </div>
+                    `;
+                });
+            } else {
+                keyFindings.innerHTML = '<p class="text-muted">無關鍵發現</p>';
+            }
+            
+            // 顯示 NLP 結果
+            displayNLPResults(result.nlp);
+            
+            // 顯示 OCR 原文
+            document.getElementById('ocrText').textContent = result.ocr.raw_text || '無法提取文字';
+            
+            // 顯示驗證結果
+            displayValidationResults(result.validation);
+        }
+        
+        function displayNLPResults(nlp) {
+            if (nlp.error) {
+                document.getElementById('nlpContent').innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        NLP 分析失敗：${nlp.error}
+                    </div>
+                `;
+                return;
+            }
+            
+            // 公司資訊
+            const companyInfo = nlp.company_info || {};
+            const companyTable = document.getElementById('companyInfoTable');
+            companyTable.innerHTML = '';
+            const companyFields = {
+                'name': '公司名稱',
+                'tax_id': '統一編號',
+                'address': '地址',
+                'contact': '聯絡方式'
+            };
+            for (const [key, label] of Object.entries(companyFields)) {
+                const value = companyInfo[key];
+                if (value) {
+                    companyTable.innerHTML += `
+                        <tr>
+                            <th width="30%">${label}</th>
+                            <td>${value}</td>
+                        </tr>
+                    `;
+                }
+            }
+            if (companyTable.innerHTML === '') {
+                companyTable.innerHTML = '<tr><td colspan="2" class="text-muted">未識別到公司資訊</td></tr>';
+            }
+            
+            // 財務數據
+            const financialData = nlp.financial_data || {};
+            const financialTable = document.getElementById('financialDataTable');
+            financialTable.innerHTML = '';
+            const financialFields = {
+                'revenue': '營業收入',
+                'cost': '營業成本',
+                'gross_profit': '毛利',
+                'operating_expenses': '營業費用',
+                'operating_income': '營業利益',
+                'net_income': '淨利',
+                'total_assets': '資產總額',
+                'total_liabilities': '負債總額',
+                'total_equity': '權益總額'
+            };
+            for (const [key, label] of Object.entries(financialFields)) {
+                const value = financialData[key];
+                if (value) {
+                    financialTable.innerHTML += `
+                        <tr>
+                            <th width="30%">${label}</th>
+                            <td class="text-end">${value}</td>
+                        </tr>
+                    `;
+                }
+            }
+            if (financialTable.innerHTML === '') {
+                financialTable.innerHTML = '<tr><td colspan="2" class="text-muted">未識別到財務數據</td></tr>';
+            }
+            
+            // 日期資訊
+            const dateInfo = nlp.date_info || {};
+            const dateTable = document.getElementById('dateInfoTable');
+            dateTable.innerHTML = '';
+            const dateFields = {
+                'document_date': '文件日期',
+                'period_start': '期間起始',
+                'period_end': '期間結束'
+            };
+            for (const [key, label] of Object.entries(dateFields)) {
+                const value = dateInfo[key];
+                if (value) {
+                    dateTable.innerHTML += `
+                        <tr>
+                            <th width="30%">${label}</th>
+                            <td>${value}</td>
+                        </tr>
+                    `;
+                }
+            }
+            if (dateTable.innerHTML === '') {
+                dateTable.innerHTML = '<tr><td colspan="2" class="text-muted">未識別到日期資訊</td></tr>';
+            }
+            
+            // 其他欄位
+            const otherFields = nlp.other_fields || [];
+            if (otherFields.length > 0) {
+                document.getElementById('otherFieldsSection').style.display = 'block';
+                const otherTable = document.getElementById('otherFieldsTable');
+                otherTable.innerHTML = '';
+                otherFields.forEach(field => {
+                    otherTable.innerHTML += `
+                        <tr>
+                            <th width="30%">${field.field_name}</th>
+                            <td>${field.value}</td>
+                        </tr>
+                    `;
+                });
+            }
+        }
+        
+        function displayValidationResults(validation) {
+            // 驗證狀態
+            const statusDiv = document.getElementById('validationStatus');
+            if (validation.status === 'passed') {
+                statusDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <i class="bi bi-check-circle me-2"></i>
+                        所有驗證檢查均已通過
+                    </div>
+                `;
+            } else if (validation.status === 'failed') {
+                statusDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="bi bi-x-circle me-2"></i>
+                        發現邏輯錯誤，請檢查以下問題
+                    </div>
+                `;
+            } else {
+                statusDiv.innerHTML = `
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        ${validation.reason || '驗證跳過'}
+                    </div>
+                `;
+            }
+            
+            // 錯誤列表
+            const errors = validation.errors || [];
+            if (errors.length > 0) {
+                document.getElementById('errorsSection').style.display = 'block';
+                const errorsList = document.getElementById('errorsList');
+                errorsList.innerHTML = '';
+                errors.forEach(error => {
+                    errorsList.innerHTML += `
+                        <div class="error-item">
+                            <strong><i class="bi bi-exclamation-triangle text-danger me-2"></i>${error.type}</strong>
+                            <p class="mb-1">${error.message}</p>
+                            ${error.expected ? `<small class="text-muted">預期值: ${error.expected} | 實際值: ${error.actual} | 差異: ${error.difference}</small>` : ''}
+                        </div>
+                    `;
+                });
+                
+                // 更新錯誤徽章
+                const errorBadge = document.getElementById('errorBadge');
+                errorBadge.style.display = 'inline';
+                errorBadge.textContent = errors.length;
+            }
+            
+            // 警告列表
+            const warnings = validation.warnings || [];
+            if (warnings.length > 0) {
+                document.getElementById('warningsSection').style.display = 'block';
+                const warningsList = document.getElementById('warningsList');
+                warningsList.innerHTML = '';
+                warnings.forEach(warning => {
+                    warningsList.innerHTML += `
+                        <div class="warning-item">
+                            <strong><i class="bi bi-exclamation-circle text-warning me-2"></i>${warning.type}</strong>
+                            <p class="mb-0">${warning.message || ''} ${warning.reason || ''}</p>
+                            ${warning.value ? `<small class="text-muted">值: ${warning.value}</small>` : ''}
+                        </div>
+                    `;
+                });
+            }
+            
+            // 已執行檢核
+            const checks = validation.checks_performed || {};
+            const checksDiv = document.getElementById('checksPerformed');
+            checksDiv.innerHTML = '';
+            const checkLabels = {
+                'accounting_equation': '會計恆等式檢核 (資產=負債+權益)',
+                'gross_profit_check': '毛利計算檢核 (毛利=營收-成本)',
+                'operating_income_check': '營業利益檢核',
+                'tax_id_check': '統一編號格式檢核'
+            };
+            for (const [key, performed] of Object.entries(checks)) {
+                const icon = performed ? 'bi-check-circle text-success' : 'bi-dash-circle text-muted';
+                const status = performed ? '已執行' : '未執行';
+                checksDiv.innerHTML += `
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi ${icon} me-2"></i>
+                        <span>${checkLabels[key] || key}</span>
+                        <span class="badge ${performed ? 'bg-success' : 'bg-secondary'} ms-auto">${status}</span>
+                    </div>
+                `;
+            }
+        }
+        
+        function resetUpload() {
+            selectedFile = null;
+            analysisResult = null;
+            fileInput.value = '';
+            document.getElementById('fileInfo').style.display = 'none';
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('uploadSection').style.display = 'block';
+            
+            // 重置表格
+            document.getElementById('errorsSection').style.display = 'none';
+            document.getElementById('warningsSection').style.display = 'none';
+            document.getElementById('otherFieldsSection').style.display = 'none';
+            document.getElementById('errorBadge').style.display = 'none';
+        }
+        
+        function downloadResult() {
+            if (!analysisResult) {
+                alert('沒有可下載的分析結果！');
+                return;
+            }
+            
+            const blob = new Blob([JSON.stringify(analysisResult, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `IDP_Analysis_${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
