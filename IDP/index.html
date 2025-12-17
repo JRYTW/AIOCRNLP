@@ -6,178 +6,324 @@
     <title>智能文件前置處理平台 (IDP)</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #2563eb;
-            --secondary-color: #1e40af;
-            --success-color: #059669;
-            --warning-color: #d97706;
-            --danger-color: #dc2626;
-            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-color: #5c7c8a;
+            --secondary-color: #8fa5af;
+            --accent-color: #c9a87c;
+            --success-color: #7a9e7e;
+            --warning-color: #d4a574;
+            --danger-color: #c17b7b;
+            --bg-color: #fafafa;
+            --card-bg: #ffffff;
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --text-muted: #95a5a6;
+            --border-color: #e8e8e8;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        * {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
         }
         
         body {
-            background: #f8fafc;
+            background: var(--bg-color);
             min-height: 100vh;
+            color: var(--text-primary);
+            letter-spacing: 0.02em;
         }
         
+        /* 頂部區域 - 簡約風 */
         .hero-section {
-            background: var(--bg-gradient);
-            color: white;
-            padding: 40px 0;
-            margin-bottom: 30px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            padding: 48px 0;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--border-color);
         }
         
         .hero-section h1 {
-            font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            font-weight: 300;
+            font-size: 1.75rem;
+            letter-spacing: 0.1em;
         }
         
+        .hero-section h1 i {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        .hero-section .lead {
+            color: var(--text-secondary);
+            font-weight: 300;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+        }
+        
+        .hero-section .opacity-75 {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        
+        .hero-section .badge {
+            background: var(--bg-color) !important;
+            color: var(--text-secondary) !important;
+            font-weight: 400;
+            font-size: 0.75rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        /* 上傳區域 */
         .upload-zone {
-            border: 3px dashed #cbd5e1;
-            border-radius: 20px;
+            border: 1px dashed var(--border-color);
+            border-radius: 4px;
             padding: 60px 40px;
             text-align: center;
             transition: all 0.3s ease;
-            background: white;
+            background: var(--card-bg);
             cursor: pointer;
         }
         
         .upload-zone:hover, .upload-zone.dragover {
             border-color: var(--primary-color);
-            background: #f0f7ff;
-            transform: scale(1.02);
+            background: #fcfcfc;
         }
         
         .upload-zone i {
-            font-size: 4rem;
-            color: #94a3b8;
+            font-size: 2.5rem;
+            color: var(--text-muted);
             margin-bottom: 20px;
+            font-weight: 300;
         }
         
-        .upload-zone.dragover i {
-            color: var(--primary-color);
+        .upload-zone h4 {
+            font-weight: 400;
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
         }
         
+        .upload-zone p {
+            font-size: 0.8rem;
+        }
+        
+        .upload-zone .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 10px 28px;
+            border-radius: 2px;
+            letter-spacing: 0.05em;
+            transition: all 0.2s ease;
+        }
+        
+        .upload-zone .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: none;
+        }
+        
+        /* 功能卡片 */
         .feature-card {
-            background: white;
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            background: var(--card-bg);
+            border-radius: 4px;
+            padding: 28px;
+            box-shadow: var(--shadow-sm);
             height: 100%;
-            transition: transform 0.3s ease;
+            transition: box-shadow 0.3s ease;
+            border: 1px solid var(--border-color);
         }
         
         .feature-card:hover {
-            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            transform: none;
         }
         
         .feature-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 15px;
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+            background: var(--bg-color) !important;
         }
         
+        .feature-icon.text-primary {
+            color: var(--primary-color) !important;
+        }
+        
+        .feature-icon.text-success {
+            color: var(--success-color) !important;
+        }
+        
+        .feature-icon.text-warning {
+            color: var(--accent-color) !important;
+        }
+        
+        .feature-card h5 {
+            font-weight: 500;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+        
+        .feature-card p {
+            font-size: 0.8rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+        
+        /* 結果區域 */
         .result-section {
             display: none;
         }
         
         .result-card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            background: var(--card-bg);
+            border-radius: 4px;
+            box-shadow: var(--shadow-sm);
             overflow: hidden;
+            border: 1px solid var(--border-color);
         }
         
         .result-header {
-            padding: 20px 25px;
-            border-bottom: 1px solid #e2e8f0;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--card-bg);
+        }
+        
+        .result-header h5 {
+            font-weight: 400;
+            font-size: 0.95rem;
+            color: var(--text-primary);
         }
         
         .result-body {
-            padding: 25px;
+            padding: 24px;
         }
         
+        .result-body label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
+        
+        .result-body h5 {
+            font-weight: 400;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+        
+        /* 狀態徽章 */
         .status-badge {
             display: inline-flex;
             align-items: center;
             padding: 6px 14px;
-            border-radius: 20px;
-            font-weight: 500;
-            font-size: 0.9rem;
+            border-radius: 2px;
+            font-weight: 400;
+            font-size: 0.75rem;
+            letter-spacing: 0.03em;
         }
         
         .status-passed {
-            background: #d1fae5;
-            color: #065f46;
+            background: #f0f5f0;
+            color: var(--success-color);
         }
         
         .status-failed {
-            background: #fee2e2;
-            color: #991b1b;
+            background: #faf0f0;
+            color: var(--danger-color);
         }
         
         .status-warning {
-            background: #fef3c7;
-            color: #92400e;
+            background: #faf5f0;
+            color: var(--warning-color);
         }
         
+        /* 錯誤與警告項目 */
         .error-item {
-            background: #fef2f2;
-            border-left: 4px solid var(--danger-color);
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 0 8px 8px 0;
+            background: #fdfafa;
+            border-left: 2px solid var(--danger-color);
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .error-item strong {
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        
+        .error-item p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
         }
         
         .warning-item {
-            background: #fffbeb;
-            border-left: 4px solid var(--warning-color);
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 0 8px 8px 0;
+            background: #fdfcfa;
+            border-left: 2px solid var(--warning-color);
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 0 4px 4px 0;
         }
         
+        .warning-item strong {
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        
+        /* 數據表格 */
         .data-table {
             width: 100%;
         }
         
         .data-table th {
-            background: #f8fafc;
-            padding: 12px 15px;
+            background: var(--bg-color);
+            padding: 12px 16px;
             text-align: left;
-            font-weight: 600;
-            color: #475569;
+            font-weight: 400;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
         }
         
         .data-table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            color: var(--text-primary);
         }
         
+        /* OCR 文字框 */
         .ocr-text-box {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
             padding: 20px;
-            font-family: 'Consolas', monospace;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.8rem;
             white-space: pre-wrap;
             max-height: 400px;
             overflow-y: auto;
+            line-height: 1.8;
+            color: var(--text-primary);
         }
         
+        /* 載入畫面 */
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
+            background: rgba(255,255,255,0.95);
             display: none;
             justify-content: center;
             align-items: center;
@@ -186,49 +332,252 @@
         
         .loading-content {
             text-align: center;
-            color: white;
+            color: var(--text-primary);
+        }
+        
+        .loading-content h4 {
+            font-weight: 300;
+            font-size: 1.1rem;
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
+        }
+        
+        .loading-content p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
         }
         
         .spinner-border {
-            width: 4rem;
-            height: 4rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-width: 2px;
+            color: var(--primary-color) !important;
         }
         
+        .progress-container .progress {
+            background: var(--border-color) !important;
+        }
+        
+        .progress-container .progress-bar {
+            background: var(--primary-color) !important;
+        }
+        
+        .progress-container small {
+            color: var(--text-muted) !important;
+            font-size: 0.75rem;
+        }
+        
+        /* 信心度條 */
         .confidence-bar {
-            height: 10px;
-            border-radius: 5px;
-            background: #e2e8f0;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border-color);
             overflow: hidden;
         }
         
         .confidence-fill {
             height: 100%;
-            border-radius: 5px;
+            border-radius: 3px;
             transition: width 0.5s ease;
         }
         
+        .confidence-fill.bg-success {
+            background: var(--success-color) !important;
+        }
+        
+        .confidence-fill.bg-warning {
+            background: var(--warning-color) !important;
+        }
+        
+        .confidence-fill.bg-danger {
+            background: var(--danger-color) !important;
+        }
+        
+        /* 關鍵發現 */
         .key-finding-item {
             display: flex;
             align-items: center;
-            padding: 10px 15px;
-            background: #f0f9ff;
-            border-radius: 8px;
+            padding: 12px 16px;
+            background: var(--bg-color);
+            border-radius: 4px;
             margin-bottom: 8px;
+            border: 1px solid var(--border-color);
         }
         
         .key-finding-item i {
-            color: var(--primary-color);
-            margin-right: 10px;
+            color: var(--success-color);
+            margin-right: 12px;
+            font-size: 0.9rem;
         }
         
+        .key-finding-item span {
+            font-size: 0.85rem;
+            color: var(--text-primary);
+        }
+        
+        /* 標籤頁 */
+        .nav-tabs {
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .nav-tabs .nav-link {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 400;
+            border: none;
+            padding: 12px 20px;
+            margin-bottom: -1px;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            color: var(--text-primary);
+            border: none;
+            background: transparent;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
+            border: none;
+            border-bottom: 2px solid var(--primary-color);
+            background: transparent;
+        }
+        
+        /* 按鈕 */
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            border-radius: 2px;
+            font-size: 0.85rem;
+            padding: 10px 24px;
+            font-weight: 400;
+            letter-spacing: 0.03em;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary-color);
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 2px;
+            font-size: 0.85rem;
+            padding: 10px 24px;
+            font-weight: 400;
+            letter-spacing: 0.03em;
+        }
+        
+        .btn-outline-primary:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-success {
+            background: var(--success-color);
+            border: none;
+            border-radius: 2px;
+            font-size: 0.85rem;
+        }
+        
+        .btn-success:hover {
+            background: #6b8e6e;
+        }
+        
+        .btn-outline-danger {
+            color: var(--danger-color);
+            border-color: var(--danger-color);
+            border-radius: 2px;
+            font-size: 0.8rem;
+        }
+        
+        .btn-outline-danger:hover {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        /* Alert */
+        .alert-info {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        
+        .alert-success {
+            background: #f5f9f5;
+            border: 1px solid #e0e8e0;
+            color: var(--success-color);
+            border-radius: 4px;
+        }
+        
+        .alert-danger {
+            background: #faf5f5;
+            border: 1px solid #e8e0e0;
+            color: var(--danger-color);
+            border-radius: 4px;
+        }
+        
+        .alert-warning {
+            background: #faf9f5;
+            border: 1px solid #e8e5e0;
+            color: var(--warning-color);
+            border-radius: 4px;
+        }
+        
+        /* Badge */
+        .badge.bg-danger {
+            background: var(--danger-color) !important;
+            font-weight: 400;
+            font-size: 0.7rem;
+        }
+        
+        .badge.bg-success {
+            background: var(--success-color) !important;
+            font-weight: 400;
+            font-size: 0.7rem;
+        }
+        
+        .badge.bg-secondary {
+            background: var(--text-muted) !important;
+            font-weight: 400;
+            font-size: 0.7rem;
+        }
+        
+        /* 響應式 */
         @media (max-width: 768px) {
             .hero-section {
-                padding: 30px 0;
+                padding: 32px 0;
+            }
+            
+            .hero-section h1 {
+                font-size: 1.4rem;
             }
             
             .upload-zone {
-                padding: 40px 20px;
+                padding: 40px 24px;
             }
+        }
+        
+        /* 滾動條樣式 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
         }
     </style>
 </head>
@@ -236,16 +585,16 @@
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-content">
-            <div class="spinner-border text-light mb-4" role="status">
+            <div class="spinner-border mb-4" role="status">
                 <span class="visually-hidden">處理中...</span>
             </div>
             <h4>智能分析進行中</h4>
             <p id="loadingStatus">正在初始化...</p>
-            <div class="progress-container mt-3" style="width: 300px;">
-                <div class="progress" style="height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px;">
-                    <div class="progress-bar bg-light" id="progressBar" role="progressbar" style="width: 0%; transition: width 0.3s ease;"></div>
+            <div class="progress-container mt-3" style="width: 280px;">
+                <div class="progress" style="height: 4px; border-radius: 2px;">
+                    <div class="progress-bar" id="progressBar" role="progressbar" style="width: 0%; transition: width 0.3s ease;"></div>
                 </div>
-                <small class="text-light mt-2 d-block" id="progressPercent">0%</small>
+                <small class="mt-2 d-block" id="progressPercent">0%</small>
             </div>
         </div>
     </div>
@@ -255,13 +604,13 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-8">
-                    <h1><i class="bi bi-file-earmark-text me-3"></i>智能文件前置處理平台</h1>
-                    <p class="lead mb-0">Intelligent Document Processing (IDP)</p>
-                    <p class="mt-2 opacity-75">AI-OCR 光學字元辨識 + NLP 自然語言處理 = 智能財務文件分析</p>
+                    <h1><i class="bi bi-file-earmark-text me-2"></i>智能文件前置處理平台</h1>
+                    <p class="lead mb-0">Intelligent Document Processing</p>
+                    <p class="mt-2 opacity-75">AI-OCR × NLP ─ 財務文件智能分析</p>
                 </div>
                 <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                    <span class="badge bg-light text-dark px-3 py-2">
-                        <i class="bi bi-cpu me-1"></i> Powered by Gemini AI
+                    <span class="badge px-3 py-2">
+                        <i class="bi bi-cpu me-1"></i> Gemini AI
                     </span>
                 </div>
             </div>
@@ -274,25 +623,25 @@
         <div class="row mb-4">
             <div class="col-md-4 mb-3">
                 <div class="feature-card">
-                    <div class="feature-icon bg-primary bg-opacity-10 text-primary">
+                    <div class="feature-icon text-primary">
                         <i class="bi bi-file-earmark-image"></i>
                     </div>
-                    <h5>多格式攝取</h5>
+                    <h5>多格式採取</h5>
                     <p class="text-muted mb-0">支援 PDF、JPG、PNG 等多種格式，處理歪斜、陰影文件</p>
                 </div>
             </div>
             <div class="col-md-4 mb-3">
                 <div class="feature-card">
-                    <div class="feature-icon bg-success bg-opacity-10 text-success">
+                    <div class="feature-icon text-success">
                         <i class="bi bi-translate"></i>
                     </div>
                     <h5>語意理解</h5>
-                    <p class="text-muted mb-0">NLP 智能識別欄位意義，自動分辨營業收入、統一編號等</p>
+                    <p class="text-muted mb-0">NLP 智能識別欄位意義，自動辨識營業收入、統一編號等</p>
                 </div>
             </div>
             <div class="col-md-4 mb-3">
                 <div class="feature-card">
-                    <div class="feature-icon bg-warning bg-opacity-10 text-warning">
+                    <div class="feature-icon text-warning">
                         <i class="bi bi-shield-check"></i>
                     </div>
                     <h5>自動糾錯</h5>
@@ -306,12 +655,12 @@
             <div class="col-12">
                 <div class="upload-zone" id="uploadZone">
                     <i class="bi bi-cloud-arrow-up"></i>
-                    <h4>拖放文件至此處上傳</h4>
+                    <h4>將文件拖放至此處</h4>
                     <p class="text-muted">或點擊選擇文件</p>
                     <p class="text-muted small">支援格式：PDF、JPG、JPEG、PNG、GIF、BMP、TIFF（最大 10MB）</p>
                     <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.tiff" hidden>
-                    <button class="btn btn-primary btn-lg mt-3" onclick="document.getElementById('fileInput').click()">
-                        <i class="bi bi-upload me-2"></i>選擇文件
+                    <button class="btn btn-primary mt-3" id="selectFileButton">
+                        選擇文件
                     </button>
                 </div>
             </div>
@@ -515,6 +864,7 @@
         // 拖放功能
         const uploadZone = document.getElementById('uploadZone');
         const fileInput = document.getElementById('fileInput');
+        const selectFileButton = document.getElementById('selectFileButton');
         
         uploadZone.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -537,6 +887,13 @@
         uploadZone.addEventListener('click', () => {
             fileInput.click();
         });
+
+        if (selectFileButton) {
+            selectFileButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                fileInput.click();
+            });
+        }
         
         fileInput.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
